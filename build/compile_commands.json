@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/mikhail/eclipse-workspace/socketServer/build",
+  "command": "/usr/bin/g++  -I/home/mikhail/eclipse-workspace/socketServer/Server -g -std=gnu++17 -o CMakeFiles/socketServer.dir/socketServer.cpp.o -c /home/mikhail/eclipse-workspace/socketServer/socketServer.cpp",
+  "file": "/home/mikhail/eclipse-workspace/socketServer/socketServer.cpp"
+},
+{
+  "directory": "/home/mikhail/eclipse-workspace/socketServer/build/Server",
+  "command": "/usr/bin/g++  -I/home/mikhail/eclipse-workspace/socketServer/Server -g -std=gnu++17 -o CMakeFiles/server.dir/server.cpp.o -c /home/mikhail/eclipse-workspace/socketServer/Server/server.cpp",
+  "file": "/home/mikhail/eclipse-workspace/socketServer/Server/server.cpp"
+}
+]

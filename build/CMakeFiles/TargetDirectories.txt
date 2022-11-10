@@ -1,0 +1,6 @@
+/home/mikhail/eclipse-workspace/socketServer/build/CMakeFiles/socketServer.dir
+/home/mikhail/eclipse-workspace/socketServer/build/CMakeFiles/edit_cache.dir
+/home/mikhail/eclipse-workspace/socketServer/build/CMakeFiles/rebuild_cache.dir
+/home/mikhail/eclipse-workspace/socketServer/build/Server/CMakeFiles/server.dir
+/home/mikhail/eclipse-workspace/socketServer/build/Server/CMakeFiles/edit_cache.dir
+/home/mikhail/eclipse-workspace/socketServer/build/Server/CMakeFiles/rebuild_cache.dir

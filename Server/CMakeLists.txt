@@ -1,0 +1,6 @@
+project(Server)
+set (CMAKE_CXX_STANDARD 17)
+set(SOURCES server.cpp)
+set(HEADERS server.h)
+add_library(server ${SOURCES} ${HEADERS})
+target_include_directories(server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
