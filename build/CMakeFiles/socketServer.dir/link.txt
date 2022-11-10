@@ -1,1 +1,0 @@
-/usr/bin/g++ -g -rdynamic CMakeFiles/socketServer.dir/socketServer.cpp.o -o socketServer  Server/libserver.a -lpthread 
