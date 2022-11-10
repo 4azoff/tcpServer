@@ -36,7 +36,5 @@ int main(int argc, char *argv[])
 
     serverThread.join();
 
-    std::cout << "Server closed" << std::endl;
-
     return 0;
 }
