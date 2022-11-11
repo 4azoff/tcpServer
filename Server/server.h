@@ -14,20 +14,17 @@
 #include <exception>
 #include <limits.h>
 
-
 class Server
 {
-private: 
-
-    std::unordered_map<uint32_t, std::map<int, std::pair<int,int>>> storage;
+private:
+    std::unordered_map<uint32_t, std::map<int, std::pair<int, int>>> storage;
     mutable std::shared_mutex mt;
-    std::atomic_bool stopFlag {false};
+    std::atomic_bool stopFlag{false};
 
 public:
-
     void WorkWithClient(const int socketDesc, const uint32_t clientAddres);
-    void ExportSeq(const int& socketDesc, const uint32_t& clientAddres);
+    void ExportSeq(const int &socketDesc, const uint32_t &clientAddres);
+    void HandleSplitCommand(const int &socketDesc, const uint32_t &clientAddres, const std::vector<std::string> &args);
     void Start(const int port);
     void Stop();
-
 };

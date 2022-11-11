@@ -34,7 +34,7 @@ void Server::ExportSeq(const int &socketDesc, const uint32_t &clientAddres)
     if (this->storage.find(clientAddres) != this->storage.end())
     {
         std::vector<Counter> sequences;
-        std::shared_lock lk (this->mt);
+        std::shared_lock lk(this->mt);
         for (const auto &seq : this->storage[clientAddres])
         {
             if (seq.second.first != 0 && seq.second.first != 0)
@@ -60,7 +60,7 @@ void Server::ExportSeq(const int &socketDesc, const uint32_t &clientAddres)
             }
             tmp += "\n";
             send(socketDesc, tmp.c_str(), sizeof(tmp), 0);
-            //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         }
     }
     else
@@ -70,54 +70,64 @@ void Server::ExportSeq(const int &socketDesc, const uint32_t &clientAddres)
     }
 }
 
+void Server::HandleSplitCommand(const int &socketDesc, const uint32_t &clientAddres, const std::vector<std::string> &args)
+{
+    std::string ans;
+    if (args.size() > 3)
+    {
+        ans = "Unknown command\n";
+        send(socketDesc, ans.c_str(), sizeof(ans), 0);
+    }
+    else if (args[0].substr(0, 3) == "seq" && args[0][3] >= '1' && args[0][3] <= '3')
+    {
+        try
+        {
+            auto numSeq = args[0][3] - '0';
+            auto startValue = std::stoi(args[1]);
+            auto step = std::stoi(args[2]);
+            auto seq = std::make_pair(startValue, step);
+
+            std::unique_lock lk(this->mt);
+            this->storage[clientAddres][numSeq] = seq;
+
+            ans = args[0] + " are set\n";
+            send(socketDesc, ans.c_str(), sizeof(ans), 0);
+        }
+        catch (std::exception &e)
+        {
+            ans = "Invalid seq parametrs\n";
+            send(socketDesc, ans.c_str(), sizeof(ans), 0);
+        }
+    }
+    else if (args[0] == "export" && args[1] == "seq")
+    {
+        ExportSeq(socketDesc, clientAddres);
+    }
+    else
+    {
+        ans = "Unknown command\n";
+        send(socketDesc, ans.c_str(), sizeof(ans), 0);
+    }
+}
+
 void Server::WorkWithClient(const int socketDesc, const uint32_t clientAddres)
 {
-    char msg[150] = "To disconnect type "
-                    "exit"
-                    "\n";
-    send(socketDesc, &msg, sizeof(msg), 0);
+    char msgBuff[150] = "To disconnect type "
+                        "exit"
+                        "\n";
+    send(socketDesc, &msgBuff, sizeof(msgBuff), 0);
     std::cout << "addr clint:" << clientAddres << std::endl;
     while (!this->stopFlag)
     {
-        memset(&msg, 0, sizeof(msg));
-        recv(socketDesc, &msg, sizeof(msg), 0);
-        std::string command(msg);
+        memset(&msgBuff, 0, sizeof(msgBuff));
+        recv(socketDesc, &msgBuff, sizeof(msgBuff), 0);
+        std::string command(msgBuff);
         auto args = splitRecvData(command, ' ');
-
         if (args[0] == "exit")
         {
             break;
         }
-        else if (args[0].substr(0, 3) == "seq" && args[0][3] >= '1' && args[0][3] <= '3')
-        {
-            try
-            {
-                auto numSeq = args[0][3] - '0';
-                auto startValue = std::stoi(args[1]);
-                auto step = std::stoi(args[2]);
-                auto seq = std::make_pair(startValue, step);
-
-                std::unique_lock lk(this->mt);
-                this->storage[clientAddres][numSeq] = seq;
-                
-                strcpy(msg, "Seq are set\n");
-                send(socketDesc, &msg, sizeof(msg), 0);
-            }
-            catch (std::exception &e)
-            {
-                strcpy(msg, "Invalid seq parametrs\n");
-                send(socketDesc, &msg, sizeof(msg), 0);
-            }
-        }
-        else if (args[0] == "export" && args[1] == "seq")
-        {
-            ExportSeq(socketDesc, clientAddres);
-        }
-        else
-        {
-            strcpy(msg, "Unknown command\n");
-            send(socketDesc, &msg, sizeof(msg), 0);
-        }
+        HandleSplitCommand(socketDesc, clientAddres, args);
     }
     close(socketDesc);
     std::cout << "Client desc closed" << std::endl;
@@ -163,7 +173,7 @@ void Server::Start(const int port)
 
         std::thread newClient(&Server::WorkWithClient, this, newSd, clientSocketAddres.sin_addr.s_addr);
         newClient.detach();
-    }    
+    }
 
     close(serverSd);
 
