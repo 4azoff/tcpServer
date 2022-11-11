@@ -55,6 +55,7 @@ void Server::ExportSeq(const int &socketDesc, const uint32_t &clientAddres)
     if (this->storage.find(clientAddres) != this->storage.end())
     {
         std::vector<Counter> sequences;
+        std::shared_lock lk (this->mt);
         for (const auto &seq : this->storage[clientAddres])
         {
             if (seq.second.first != 0 && seq.second.first != 0)
@@ -62,6 +63,7 @@ void Server::ExportSeq(const int &socketDesc, const uint32_t &clientAddres)
                 sequences.emplace_back(seq.second.first, seq.second.second, seq.second.first);
             }
         }
+        lk.unlock();
         while (!this->stopFlag)
         {
             std::string tmp;
@@ -116,9 +118,9 @@ void Server::WorkWithClient(const int socketDesc, const uint32_t clientAddres)
                 auto step = std::stoi(args[2]);
                 auto seq = std::make_pair(startValue, step);
 
-                std::scoped_lock lk(this->mt);
+                std::unique_lock lk(this->mt);
                 this->storage[clientAddres][numSeq] = seq;
-
+                
                 strcpy(msg, "Seq are set\n");
                 send(socketDesc, &msg, sizeof(msg), 0);
             }
