@@ -22,6 +22,7 @@
 #include <mutex>
 #include <memory>
 
+//Структруа для хранения счетчика
 struct Counter
 {
     unsigned long long counter;
